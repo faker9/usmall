@@ -11,43 +11,33 @@
           active-text-color="#ffd04b"
         >
           <el-menu-item index="home">
-            <i class="el-icon-setting"></i>
+            <i class="el-icon-setting" ></i>
             <span slot="title">首页</span>
           </el-menu-item>
-          <el-submenu index="1">
+
+        <el-submenu v-show='hasChildren' v-for='(item,index) in user.menus' :key='index' :index="item.id+''">
             <template slot="title">
-              <i class="el-icon-location"></i>
-              <span>系统设置</span>
+              <i :class="item.icon"></i>
+              <span>{{item.title}}</span>
             </template>
             <el-menu-item-group>
-              <el-menu-item index="menu">菜单管理</el-menu-item>
-              <el-menu-item index="role">角色管理</el-menu-item>
-              <el-menu-item index="manage">管理员管理</el-menu-item>
+              <el-menu-item v-for='(i) in item.children' :key='i.id' :index="i.url+''">{{i.title}}</el-menu-item>
             </el-menu-item-group>
           </el-submenu>
 
-          <el-submenu index="2">
-            <template slot="title">
-              <i class="el-icon-location"></i>
-              <span>商城管理</span>
-            </template>
-            <el-menu-item-group>
-              <el-menu-item index="sort">商品分类</el-menu-item>
-              <el-menu-item index="spec">商品规格</el-menu-item>
-              <el-menu-item index="goods">商品管理</el-menu-item>
-              <el-menu-item index="member">会员管理</el-menu-item>
-              <el-menu-item index="banner">轮播图管理</el-menu-item>
-              <el-menu-item index="seckill">秒杀活动</el-menu-item>
-            </el-menu-item-group>
-          </el-submenu>
+        
+              <el-menu-item v-show="!hasChildren" v-for="i in user.menus" :key='i.id' :index="i.url" >{{i.title}}</el-menu-item>
+         
+           
+      
         </el-menu>
         <!-- 侧边导航 -->
       </el-aside>
       <!-- 头部 -->
       <el-container>
         <el-header>
-          <i class="el-icon-share"></i>
-          <span>admin</span>
+          <i class="el-icon-moon-night" @click = exit></i>
+          <span>{{user.username}}</span>
         </el-header>
         <!-- 中心 -->
         <el-main>
@@ -55,6 +45,7 @@
             <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
             <el-breadcrumb-item>{{$route.name}}</el-breadcrumb-item>
           </el-breadcrumb>
+          
           <router-view class="con"></router-view>
         </el-main>
       </el-container>
@@ -62,12 +53,32 @@
   </div>
 </template>
 <script>
+import {mapGetters,mapActions} from 'vuex'
 export default {
-  components: {},
+ computed:{
+   ...mapGetters({
+     user:'user'
+   }),
+   //用来判断是否有目录
+    hasChildren(){
+      return this.user.menus[0].children?true:false
+    }
+ },
   data() {
     return {};
   },
-  methods: {},
+  methods: {
+    ...mapActions({
+      changeUser:'changeUser',
+    }),
+    exit(){
+      this.changeUser(null)
+      this.$router.push('/login')
+    }
+  },
+  mounted(){
+    
+  }
 };
 </script>
 <style scoped>

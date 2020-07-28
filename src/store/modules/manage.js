@@ -16,7 +16,6 @@ export const mutations ={
     },
     //修改总页数
     changeTotal(state,total){
-        console.log(total,'11111111111111')
         state.total =total
     },
      //修改当前页码

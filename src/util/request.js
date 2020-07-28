@@ -285,13 +285,13 @@ export const requestGoodsList = (params) => axios({
 })
 //获取商品总数
 export const requestGoodsCount = (params) => axios({
-  url: baseUrl + '/api/goodsinfo',
+  url: baseUrl + '/api/goodscount',
   method: 'get',
   params
 })
 //获取商品信息一条
 export const requestGoodsDetail = (params) => axios({
-  url: baseUrl + '/api/goodscount',
+  url: baseUrl + '/api/goodsinfo',
   method: 'get',
   params
 })
@@ -311,6 +311,55 @@ export const requestGoodsUpdate = (params) => {
 //商品删除
 export const requestGoodsDelete = (params) => axios({
   url: baseUrl + '/api/goodsdelete',
+  method: 'post',
+  data: qs.stringify(params)
+})
+
+
+// ===========================轮播图管理=====================================
+
+//轮播图添加
+export const requestBannerAdd = (params) => {
+  var form = new FormData();
+  for (var i in params) {
+    form.append(i, params[i])
+  }
+  return axios({
+    url: baseUrl + '/api/banneradd',
+    method: 'post',
+    data: form
+  })
+}
+
+//轮播图列表
+export const requestBannerList = (params) => axios({
+  url: baseUrl + '/api/bannerlist',
+  method: 'get',
+  params
+})
+
+//获取轮播图信息一条
+export const requestBannerDetail = (params) => axios({
+  url: baseUrl + '/api/bannerinfo',
+  method: 'get',
+  params
+})
+
+//轮播图修改
+export const requestBannerUpdate = (params) => {
+  var form = new FormData();
+  for (var i in params) {
+    form.append(i, params[i])
+  }
+  return axios({
+    url: baseUrl + '/api/banneredit',
+    method: 'post',
+    data:form
+  })
+}
+//轮播图删除
+export const requestBannerDelete = (params) => axios({
+  url: baseUrl + '/api/bannerdelete',
   method: 'post',
   data: qs.stringify(params)
 })

@@ -45,11 +45,11 @@ router.get("/seckinfo", async (req, res) => {
 })
 //修改秒杀活动
 router.post("/seckedit", async (req, res) => {
-    let { id, title,begintime,endtime,first_cateid,second_cateid,goods,status } = req['body'];
+    let { id, title,begintime,endtime,first_cateid,second_cateid,goodsid,status } = req['body'];
     if (!id) {
         res.send(MError("缺少必要条件"));
     } else {
-        const result = await Db.update(req, tableName, { title,begintime,endtime,status }, ` WHERE id = ${id}`);
+        const result = await Db.update(req, tableName, { title,begintime,endtime,first_cateid,second_cateid,goodsid,status }, ` WHERE id = ${id}`);
         result === true ? res.send(Success()) : res.send(MError(result));
     }
 });

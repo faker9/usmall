@@ -10,6 +10,7 @@
     </div>
 </template>
 <script>
+import {mapActions,mapGetters} from 'vuex'
 import {requestLogin} from '../../util/request'
 import {successAlert,warningAlert} from '../../util/alert'
 
@@ -30,14 +31,17 @@ methods: {
         requestLogin(this.user).then(res=>{
             if(res.data.code==200){
                 successAlert(res.data.msg)
+                this.changeUser(res.data.list)
                 this.$router.push("/")
             }
             else{
                 warningAlert(res.data.msg)
             }
-        })
-        
-    }
+        })    
+    },
+    ...mapActions({
+        changeUser:'changeUser'
+    })
 }
 };
 </script>

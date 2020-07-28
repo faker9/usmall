@@ -36,6 +36,8 @@
         </template>
       </el-table-column>
     </el-table>
+     <!-- =============分页器========= -->
+    <el-pagination background layout="prev, pager, next" :page-size="size" :total="total" @current-change='changeP'></el-pagination>
   </div>
 </template>
 <script>
@@ -47,6 +49,9 @@ export default {
   computed: {
     ...mapGetters({
       list: "goods/list",
+       total:'goods/total',
+      size:'goods/size',
+       page:'goods/page'
     }),
   },
   data() {
@@ -58,6 +63,7 @@ export default {
     ...mapActions({
       requestList: "goods/requestList",
       requestTotal: "goods/requestTotal",
+       changePage:'goods/changePage',
     }),
     //编辑
     edit(id) {
@@ -88,10 +94,15 @@ export default {
         });
       });
     },
+    //分页
+    changeP(i){
+      this.changePage(i)
+      this.requestList()  
+    }
   },
   mounted() {
     this.requestList();
-    // this.requestTotal();
+    this.requestTotal();
   },
 };
 </script>

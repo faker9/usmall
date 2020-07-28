@@ -12,6 +12,7 @@ import spec from './modules/spec'
 import member from './modules/member'
 import sort from './modules/sort'
 import goods from './modules/goods'
+import banner from './modules/banner'
 
 export default new vuex.Store({
     state,
@@ -25,6 +26,7 @@ export default new vuex.Store({
         spec,
         member,
         sort,
-        goods
+        goods,
+        banner
     }
 })

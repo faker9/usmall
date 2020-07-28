@@ -1,8 +1,8 @@
 <template>
 <div class="goods">
     <el-button type="primary" round @click='add'>添加</el-button>
-    <v-add :info='info'></v-add>
-    <v-list></v-list>
+    <v-add :info='info' ref = 'add' ></v-add>
+    <v-list @edit= 'edit'></v-list>
 </div>
 </template>
 <script>
@@ -27,6 +27,13 @@ methods: {
         this.info.show=true,
         this.info.title='商品管理',
         this.info.isAdd=true
+    },
+    //点击编辑,主页触发事件
+    edit(id){
+        this.info.show=true,
+        this.info.title='商品修改',
+        this.info.isAdd=false;
+        this.$refs.add.getDetail(id)
     }
 }
 };

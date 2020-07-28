@@ -26,8 +26,15 @@ export const mutations ={
 
 export const actions = {
     //发送请求获取获取管理员;列表
-    requestList(context){
-        requestGoodsList({size:context.state.size,page:context.state.page}).then(res=>{
+    requestList(context,boo){
+        var params = {}
+        if(boo){
+            params = {}
+        }
+        else{
+            params =  {size:context.state.size,page:context.state.page}
+        }
+        requestGoodsList(params).then(res=>{
             context.commit('changeList',res.data.list)
         })
     },
