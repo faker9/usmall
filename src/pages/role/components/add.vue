@@ -4,15 +4,27 @@
     <!-- <el-button type="text" @click="info.show = true">打开嵌套表单的 Dialog</el-button> -->
 
     <el-dialog :title="info.title" :visible.sync="info.show">
-      <el-form :model="form">
-        <el-form-item label="角色名称" label-width="80px">
+      <el-form :model="form" status-icon ref="form">
+        <el-form-item
+          label="角色名称"
+          label-width="80px"
+          prop ='rolename'
+          :rules="[{required:true,message:'请输入角色名称', trigger: 'blur'}]"
+        >
           <el-input v-model="form.rolename" clearable></el-input>
         </el-form-item>
         <!-- 角色权限 -->
         <!-- :default-expanded-keys="[2, 3]"
         :default-checked-keys="[5]"-->
-        <el-form-item label="角色权限" label-width="80px">
-          <el-tree :data="list" show-checkbox node-key="id" :default-checked-keys='defaultKey' :props="defaultProps" ref="tree"></el-tree>
+        <el-form-item label="角色权限" label-width="80px" prop="menus"  >
+          <el-tree
+            :data="list"
+            show-checkbox
+            node-key="id"
+            :default-checked-keys="defaultKey"
+            :props="defaultProps"
+            ref="tree"
+          ></el-tree>
         </el-form-item>
         <!-- 角色状态 -->
         <el-form-item label="状态" label-width="80px">
@@ -33,7 +45,7 @@ import {
   requestRoleAdd,
   requestRoleDetail,
   requestRoleList,
-  requestRoleUpdate
+  requestRoleUpdate,
 } from "../../../util/request";
 import { successAlert, warningAlert } from "../../../util/alert";
 import { mapGetters, mapActions } from "vuex";
@@ -47,7 +59,7 @@ export default {
   },
   data() {
     return {
-      defaultKey:[],
+      defaultKey: [],
       form: {
         rolename: "",
         menus: "",
@@ -76,8 +88,8 @@ export default {
         menus: "",
         status: 1,
       };
-    //树形结构选中置空
-    this.$refs.tree.setCheckedKeys([]);
+      //树形结构选中置空
+      this.$refs.tree.setCheckedKeys([]);
     },
     cancel() {
       this.info.show = false;
@@ -87,40 +99,56 @@ export default {
     },
     //添加==================
     add() {
-        //获取tree的key赋值给form.menus
-        this.form.menus = JSON.stringify(this.$refs.tree.getCheckedKeys())
-        //发送添加角色请求
-      requestRoleAdd(this.form).then(res=>{
-          if(res.data.code==200){
-              successAlert(res.data.list)
-              this.empty();
-              this.cancel();
-        //重新请求,更新页面
-        this.requestList()
-          }
-      })
-    },
-    //获取详细信息==================
-    getDetail(id){
-      
-      requestRoleDetail({id:id}).then(res=>{
-        this.form = res.data.list
-        this.form.id = id;
-        this.defaultKey = JSON.parse(res.data.list.menus)
-      })
-    },
-    //获取修改信息==================
-    update(id){
       //获取tree的key赋值给form.menus
       this.form.menus = JSON.stringify(this.$refs.tree.getCheckedKeys());
-      requestRoleUpdate(this.form).then(res=>{
-        successAlert(res.data.msg)
-        this.cancel()
+      // alert(this.form.menus)
+      if(this.form.menus==='[]'){
+        warningAlert('请选择角色权限')
+        return
+      }
+      else if(this.form.rolename ==''){
+        warningAlert('请输入角色名称')
+        return
+      }
+      //发送添加角色请求
+      requestRoleAdd(this.form).then((res) => {
+        if (res.data.code == 200) {
+          successAlert(res.data.list);
+          this.empty();
+          this.cancel();
+          //重新请求,更新页面
+          this.requestList();
+        }
+      });
+    },
+    //获取详细信息==================
+    getDetail(id) {
+      requestRoleDetail({ id: id }).then((res) => {
+        this.form = res.data.list;
+        this.form.id = id;
+        this.defaultKey = JSON.parse(res.data.list.menus);
+      });
+    },
+    //获取修改信息==================
+    update(id) {
+      //获取tree的key赋值给form.menus
+      this.form.menus = JSON.stringify(this.$refs.tree.getCheckedKeys());
+       if(this.form.menus==='[]'){
+        warningAlert('请选择角色权限')
+        return
+      }
+      else if(this.form.rolename ==''){
+        warningAlert('请输入角色名称')
+        return
+      }
+      requestRoleUpdate(this.form).then((res) => {
+        successAlert(res.data.msg);
+        this.cancel();
         this.empty();
         //重新请求刷新页面
-          this.requestList()
-      })
-    }
+        this.requestList();
+      });
+    },
   },
 };
 </script>

@@ -1,6 +1,6 @@
 <template>
 <div class="manage">
-    <!-- <el-button type="primary" round @click='add'> 添加</el-button> -->
+    <el-button type="primary" round @click='add'> 添加</el-button>
     <v-add :info='info' ref='add' ></v-add>
     <v-list @edit='edit'></v-list>
 </div>
@@ -16,7 +16,7 @@ components: {
 data() {
 return {
     info:{
-        show:true,
+        show:false,
         isAdd:true,
         title:'会员添加'
     }

@@ -1,9 +1,9 @@
 <template>
   <div class="add">
     <el-dialog :title="info.title" :visible.sync="info.show">
-      <el-form :model="form">
+      <el-form :model="form" :rules="rules" ref="form">
         <!-- 商品名称 -->
-        <el-form-item label="商品名称" label-width="80px">
+        <el-form-item label="商品名称" label-width="80px" prop="specsname">
           <el-input v-model="form.specsname"></el-input>
         </el-form-item>
         <!-- 规格属性 -->
@@ -41,8 +41,8 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="cancel">取 消</el-button>
-        <el-button type="primary" @click="add" v-if="info.isAdd">添加</el-button>
-        <el-button type="primary" @click="update" v-else>修改</el-button>
+        <el-button type="primary" @click="add('form')" v-if="info.isAdd">添加</el-button>
+        <el-button type="primary" @click="update('form')" v-else>修改</el-button>
       </div>
     </el-dialog>
   </div>
@@ -75,6 +75,22 @@ export default {
         specsname: "",
         attrs: "",
         status: 1,
+      },
+      rules: {
+        specsname: [
+          {
+            required: true,
+            message: "请输入规格名称",
+            trigger: "change",
+          },  
+        ],
+        dynamicValidateForm:[
+          {
+            required: true,
+            message: "请输入规格名称",
+            trigger: "change",
+          }
+        ]
       },
     };
   },
@@ -116,24 +132,36 @@ export default {
       }
     },
     // 添加属性规格=======================================
-    add() {
+    add(formName) {
       //循环取到添加的属性
       for (var i = 0; i < this.dynamicValidateForm.domains.length; i++) {
         this.arr[i] = this.dynamicValidateForm.domains[i].value;
+        if(this.arr[i]==''){
+           warningAlert('规格属性不能为空')
+           return
+        }
       }
       //转换为接口需要的字符创
       this.form.attrs = JSON.stringify(this.arr);
-      //发送添加请求
-      requestSpecAdd(this.form).then((res) => {
-        if (res.data.code == 200) {
-          successAlert(res.data.msg);
-          this.cancel();
-          this.empty();
-          // 刷新页面
-          this.requestTotal();
-          this.requestList();
+     
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          //发送添加请求
+          requestSpecAdd(this.form).then((res) => {
+            if (res.data.code == 200) {
+              successAlert(res.data.msg);
+              this.cancel();
+              this.empty();
+              // 刷新页面
+              this.requestTotal();
+              this.requestList();
+            } else {
+              warningAlert(res.data.msg);
+            }
+          });
         } else {
-          warningAlert(res.data.msg);
+          warningAlert("请全部填写完毕");
+          return false;
         }
       });
     },
@@ -142,29 +170,41 @@ export default {
       requestSpecDetail({ id: id }).then((res) => {
         this.form = res.data.list[0];
         this.arr = JSON.parse(this.form.attrs);
-        this.dynamicValidateForm.domains =[];
+        this.dynamicValidateForm.domains = [];
         this.arr.forEach((item, index) => {
-           this.dynamicValidateForm.domains.push({
-             value:item
-           })
+          this.dynamicValidateForm.domains.push({
+            value: item,
+          });
         });
-       
       });
     },
-    update() {
+    update(formName) {
       //循环取到添加的属性
       for (var i = 0; i < this.dynamicValidateForm.domains.length; i++) {
         this.arr[i] = this.dynamicValidateForm.domains[i].value;
+        if(this.arr[i]==''){
+           warningAlert('规格属性不能为空')
+           return
+        }
       }
       //转换为接口需要的字符创
       this.form.attrs = JSON.stringify(this.arr);
-      requestSpecUpdate(this.form).then((res) => {
-        if (res.data.code == 200) {
-          successAlert(res.data.msg);
-          this.cancel(), this.empty();
-          //重新请求数据
-          this.requestTotal();
-          this.requestList();
+      // 验证后添加
+
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          requestSpecUpdate(this.form).then((res) => {
+            if (res.data.code == 200) {
+              successAlert(res.data.msg);
+              this.cancel(), this.empty();
+              //重新请求数据
+              this.requestTotal();
+              this.requestList();
+            }
+          });
+        } else {
+          warningAlert("请全部填写完毕");
+          return false;
         }
       });
     },

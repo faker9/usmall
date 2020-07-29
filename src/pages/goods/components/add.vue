@@ -44,7 +44,7 @@
         </div>
 
         <el-form-item label="商品规格" label-width="80px">
-          <el-select v-model="form.specsid" placeholder="请选择" @change="change2">
+          <el-select v-model="form.specsid" placeholder="请选择" @change="change2()">
             <el-option
               v-for="item in specList"
               :key="item.id"
@@ -184,7 +184,9 @@ export default {
           this.imageUrl =this.$preImg+this.form.img
           this.form.specsattr = JSON.parse(this.form.specsattr);
           this.form.id = id
+          this.change2(true)
           this.changeFirst(true)
+          
         }
       });
     },
@@ -224,14 +226,18 @@ export default {
       }
     },
     //商品规格一级菜单改变之后
-    change2() {
-      (this.secArr2 = []),
-        (this.form.specsattr = []),
+    change2(bool) {
+      this.secArr2 =[]
+      if(!bool){
+         this.form.specsattr = []
+      } 
+      // this.form.specsattr = []
         this.specList.forEach((item) => {
           if (item.id == this.form.specsid) {
             this.secArr2 = JSON.parse(item.attrs);
           }
         });
+        
     },
     // 创建编辑器
     createEditor(){

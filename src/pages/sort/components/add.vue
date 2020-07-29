@@ -1,8 +1,8 @@
 <template>
   <div class="add">
     <el-dialog :title="info.title" :visible.sync="info.show">
-      <el-form :model="form">
-        <el-form-item label="上级分类" label-width="80px">
+      <el-form :model="form" :rules="rules" ref="form">
+        <el-form-item label="上级分类" label-width="80px" prop="pid">
           <el-select v-model="form.pid">
             <el-option label="顶级分类" :value="0"></el-option>
             <el-option v-for="item in list" :key="item.id" :label="item.catename" :value="item.id"></el-option>
@@ -10,7 +10,7 @@
         </el-form-item>
 
         <!-- 分类名称 -->
-        <el-form-item label="分类名称" label-width="80px">
+        <el-form-item label="分类名称" label-width="80px" prop="catename">
           <el-input v-model="form.catename" clearable></el-input>
         </el-form-item>
 
@@ -36,8 +36,8 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="cancel">取 消</el-button>
-        <el-button type="primary" @click="confirm" v-if="info.isAdd">确 定</el-button>
-        <el-button type="primary" @click="update" v-else>修改</el-button>
+        <el-button type="primary" @click="confirm('form')" v-if="info.isAdd">确 定</el-button>
+        <el-button type="primary" @click="update('form')" v-else>修改</el-button>
       </div>
     </el-dialog>
   </div>
@@ -48,7 +48,7 @@ import { mapActions, mapGetters } from "vuex";
 import {
   requestSortAdd,
   requestSortDetail,
-  requestSortUpdate
+  requestSortUpdate,
 } from "../../../util/request";
 import { successAlert, warningAlert } from "../../../util/alert";
 export default {
@@ -63,12 +63,28 @@ export default {
     return {
       //表单信息
       form: {
-        pid: 0,
+        pid: '',
         catename: "",
         img: null,
         status: 1,
       },
-      imageUrl:''
+      rules: {
+        pid: [
+          {
+            required: true,
+            message: "请选择分类",
+            trigger: "change",
+          },
+        ],
+        catename: [
+          {
+            required: true,
+            message: "请输入名称",
+            trigger: "change",
+          },
+        ],
+      },
+      imageUrl: "",
     };
   },
 
@@ -80,29 +96,44 @@ export default {
       }
     },
     //变更图片
-    changImg(e){
-      var file = e.raw
+    changImg(e) {
+      var file = e.raw;
       // 生成一个URL地址，赋值给imageUrl,展示出来
       this.imageUrl = URL.createObjectURL(file);
-      this.form.img = file
+      this.form.img = file;
     },
     ...mapActions({
       requestList: "sort/requestList",
     }),
     //    添加
-    confirm() {
-      requestSortAdd(this.form).then((res) => {
-        if (res.data.code == 200) {
-          //弹框
-          successAlert(res.data.msg);
-          this.info.show = false;
-          this.empty();
-          //弹框消失
-          this.cancel();
-          //再次请求数据
-          this.requestList();
+    confirm(formName) {
+      /* this.$refs[formName].validate((valid) => {
+        if (valid) {
+          
+          } else {
+          warningAlert("请全部填写完毕");
+          return false;
+        }
+      }); */
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          requestSortAdd(this.form).then((res) => {
+            if (res.data.code == 200) {
+              //弹框
+              successAlert(res.data.msg);
+              this.info.show = false;
+              this.empty();
+              //弹框消失
+              this.cancel();
+              //再次请求数据
+              this.requestList();
+            } else {
+              warningAlert(res.data.msg);
+            }
+          });
         } else {
-          warningAlert(res.data.msg);
+          warningAlert("请全部填写完毕");
+          return false;
         }
       });
     },
@@ -114,37 +145,44 @@ export default {
 
         this.form.id = id;
         // 生成一个URL地址，赋值给imageUrl,展示出来
-       this.imageUrl = this.$preImg+ this.form.img
+        this.imageUrl = this.$preImg + this.form.img;
       });
     },
 
     //更新
-    update() {
-      requestSortUpdate(this.form).then((res) => {
-        if (res.data.code == 200) {
-          successAlert(res.data.msg);
-          this.empty();
-          this.cancel();
-          this.requestList();
+    update(formName ) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          requestSortUpdate(this.form).then((res) => {
+            if (res.data.code == 200) {
+              successAlert(res.data.msg);
+              this.empty();
+              this.cancel();
+              this.requestList();
+            } else {
+              warningAlert(res.data.msg);
+            }
+          });
         } else {
-          warningAlert(res.data.msg);
+          warningAlert("请全部填写完毕");
+          return false;
         }
       });
     },
     empty() {
       this.form = {
-       catename: "",
+        catename: "",
         img: null,
         status: 1,
       };
-       this.imageUrl=''
+      this.imageUrl = "";
     },
   },
 };
 </script>
 <style scoped lang= 'stylus'>
 .img-box >>> .el-upload {
-  border: 1px dashed #d9d9d9 ;
+  border: 1px dashed #d9d9d9;
   border-radius: 6px;
   cursor: pointer;
   position: relative;
@@ -152,7 +190,7 @@ export default {
 }
 
 .img-box >>> .el-upload:hover {
-  border-color: #409EFF ;
+  border-color: #409EFF;
 }
 
 .avatar-uploader-icon {

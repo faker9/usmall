@@ -24,12 +24,9 @@
               <el-menu-item v-for='(i) in item.children' :key='i.id' :index="i.url+''">{{i.title}}</el-menu-item>
             </el-menu-item-group>
           </el-submenu>
-
-        
+    
               <el-menu-item v-show="!hasChildren" v-for="i in user.menus" :key='i.id' :index="i.url" >{{i.title}}</el-menu-item>
-         
-           
-      
+  
         </el-menu>
         <!-- 侧边导航 -->
       </el-aside>
@@ -88,11 +85,11 @@ export default {
 .el-aside {
   background: #20222a;
 }
-.el-header {
+ .el-header {
   background: #b3c0d1;
   line-height: 60px;
 }
-.el-header span,
+.el-header span,.el-header
 i {
   float: right;
   margin-right: 10px;

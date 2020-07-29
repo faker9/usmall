@@ -1,9 +1,7 @@
 <template>
   <div class="list">
     <el-table :data="list" border style="width: 100%">
-      <el-table-column prop="id" label="用户编号" width="180"></el-table-column>
-      <el-table-column prop="nickname" label="昵称" width="180"></el-table-column>
-      <el-table-column prop="phone" label="手机号" width="180"></el-table-column>
+      <el-table-column prop="title" label="活动名称" width="180"></el-table-column>
       <el-table-column label="状态" width="180">
         <template slot-scope="scope">
           <el-button type="primary" v-if="scope.row.status==1">启用</el-button>
@@ -12,8 +10,8 @@
       </el-table-column>
       <el-table-column label="操作">
         <template slot-scope="scope">
-          <el-button type="primary" @click="edit(scope.row.uid)">编辑</el-button>
-          <!-- <el-button type="danger" @click="del(scope.row.uid)">删除</el-button> -->
+          <el-button type="primary" @click="edit(scope.row.id)">编辑</el-button>
+          <el-button type="danger" @click="del(scope.row.id)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -23,12 +21,13 @@
 </template>
 <script>
 import { mapActions, mapGetters } from "vuex";
+import {requestSeckillDelete} from '../../../util/request'
 import { successAlert, warningAlert } from "../../../util/alert";
 export default {
   components: {},
   computed: {
     ...mapGetters({
-      list: "member/list",
+      list: "seckill/list",
     }),
   },
   data() {
@@ -36,7 +35,7 @@ export default {
   },
   methods: {
     ...mapActions({
-      requestList: "member/requestList",
+      requestList: "seckill/requestList",
     }),
    
     //编辑=======================================
@@ -51,13 +50,10 @@ export default {
         type: "warning",
       })
         .then((res) => {
-          requestManageDelete({ uid: id }).then((res) => {
+          requestSeckillDelete({ id: id }).then((res) => {
+            console.log(222)
             if (res.data.code == 200) {
-              successAlert(res.data.msg);
-              if(res.data.list.length%this.size==0){
-                  this.changePage(this.page-1)
-              }
-              this.requestTotal()           
+              successAlert(res.data.msg);        
               this.requestList();             
             } else {
               warningAlert(res.data.msg);

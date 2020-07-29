@@ -363,3 +363,44 @@ export const requestBannerDelete = (params) => axios({
   method: 'post',
   data: qs.stringify(params)
 })
+
+
+// ===========================秒杀管理=====================================
+
+//秒杀添加
+export const requestSeckillAdd = (params) => {
+  return axios({
+    url: baseUrl + '/api/seckadd',
+    method: 'post',
+    data: qs.stringify(params)
+  })
+}
+
+//秒杀列表
+export const requestSeckillList = (params) => axios({
+  url: baseUrl + '/api/secklist',
+  method: 'get',
+  params
+})
+
+//获取秒杀信息一条
+export const requestSeckillDetail = (params) => axios({
+  url: baseUrl + '/api/seckinfo',
+  method: 'get',
+  params
+})
+
+//秒杀修改
+export const requestSeckillUpdate = (params) => {
+  return axios({
+    url: baseUrl + '/api/seckedit',
+    method: 'post',
+    data:qs.stringify(params)
+  })
+}
+//秒杀删除
+export const requestSeckillDelete = (params) => axios({
+  url: baseUrl + '/api/seckdelete',
+  method: 'post',
+  data: qs.stringify(params)
+})

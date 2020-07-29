@@ -1,15 +1,15 @@
 <template>
   <div class="add">
-    <el-dialog  :visible.sync="info.show">
-      <el-form :model="form">
+    <el-dialog  :visible.sync="info.show" >
+      <el-form :model="form" :rules="rules" ref="form">
 
         <!-- 分类名称 -->
-        <el-form-item label="标题" label-width="80px">
+        <el-form-item label="标题" label-width="80px" prop="title">
           <el-input v-model="form.title" clearable></el-input>
         </el-form-item>
 
         <!-- 图片 -->
-        <div class="img-box">
+        <div class="img-box" prop='img'>
           <el-form-item label="图片" label-width="80px">
             <el-upload
               class="avatar-uploader"
@@ -30,8 +30,8 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="cancel">取 消</el-button>
-        <el-button type="primary" @click="confirm" v-if="info.isAdd">确 定</el-button>
-        <el-button type="primary" @click="update" v-else>修改</el-button>
+        <el-button type="primary" @click="confirm('form')" v-if="info.isAdd">确 定</el-button>
+        <el-button type="primary" @click="update('form')" v-else>修改</el-button>
       </div>
     </el-dialog>
   </div>
@@ -54,6 +54,7 @@ export default {
     }),
   },
   data() {
+    
     return {
       //表单信息
       form: {
@@ -61,8 +62,17 @@ export default {
         img: null,
         status: 1,
       },
-      imageUrl:''
+      imageUrl:'',
+      rules:{
+        title:[{
+           required: true,
+            message: "请填写标题",
+            trigger: "change",
+        }],
+    
+      }
     };
+
   },
 
   methods: {
@@ -83,8 +93,16 @@ export default {
       requestList: "banner/requestList",
     }),
     //添加
-    confirm() {
-      requestBannerAdd(this.form).then((res) => {
+    confirm(formName) {
+        //确认验证成功后执行请求
+        if(this.form.img ==null){
+          warningAlert("请选择图片")
+          return 
+        }
+     
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          requestBannerAdd(this.form).then((res) => {
         if (res.data.code == 200) {
           //弹框
           successAlert(res.data.msg);
@@ -98,13 +116,18 @@ export default {
           warningAlert(res.data.msg);
         }
       });
+          } else {
+          warningAlert("请全部填写完毕");
+          return false;
+        }
+      });
+      
     },
 
     //获取一条数据
     getDetail(id) {
       requestBannerDetail({ id: id }).then((res) => {
         this.form = res.data.list;
-
         this.form.id = id;
         // 生成一个URL地址，赋值给imageUrl,展示出来
        this.imageUrl = this.$preImg+ this.form.img
@@ -112,8 +135,15 @@ export default {
     },
 
     //更新
-    update() {
-      requestBannerUpdate(this.form).then((res) => {
+    update(formName) {
+       if(this.form.img =='null'){
+          warningAlert("请选择图片")
+          return 
+        }
+        console.log(this.form.img)
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+           requestBannerUpdate(this.form).then((res) => {
         if (res.data.code == 200) {
           successAlert(res.data.msg);
           this.empty();
@@ -123,6 +153,12 @@ export default {
           warningAlert(res.data.msg);
         }
       });
+          } else {
+          warningAlert("请全部填写完毕");
+          return false;
+        }
+      })
+     
     },
     empty() {
       this.form = {
