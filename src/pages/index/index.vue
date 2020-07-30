@@ -15,7 +15,22 @@
             <span slot="title">首页</span>
           </el-menu-item>
 
-        <el-submenu v-show='hasChildren' v-for='(item,index) in user.menus' :key='index' :index="item.id+''">
+        <!-- <el-submenu v-show='hasChildren' v-for='(item,index) in user.menus' :key='index' :index="item.id+''">
+            <template slot="title">
+              <i :class="item.icon"></i>
+              <span>{{item.title}}</span>
+            </template>
+
+            <el-menu-item-group>
+              <el-menu-item v-for='(i) in item.children' :key='i.id' :index="i.url+''">{{i.title}}</el-menu-item>
+            </el-menu-item-group>
+          </el-submenu>
+    
+              <el-menu-item v-show="!hasChildren" v-for="i in user.menus" :key='i.id' :index="i.url" >{{i.title}}</el-menu-item> -->
+
+        <!--  混合时 -->
+        <template v-for="(item,index) in user.menus">
+             <el-submenu v-show='item.children'  :key='index' :index="item.id+''">
             <template slot="title">
               <i :class="item.icon"></i>
               <span>{{item.title}}</span>
@@ -24,10 +39,14 @@
               <el-menu-item v-for='(i) in item.children' :key='i.id' :index="i.url+''">{{i.title}}</el-menu-item>
             </el-menu-item-group>
           </el-submenu>
-    
-              <el-menu-item v-show="!hasChildren" v-for="i in user.menus" :key='i.id' :index="i.url" >{{i.title}}</el-menu-item>
-  
-        </el-menu>
+
+        <el-menu-item v-if="!item.children"  :key='item.id' :index="item.url" >{{item.title}}</el-menu-item>
+        </template>
+
+
+
+        </el-menu> 
+
         <!-- 侧边导航 -->
       </el-aside>
       <!-- 头部 -->

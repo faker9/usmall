@@ -30,7 +30,8 @@ import store from './store'
 
 //图片公共头
 Vue.prototype.$preImg = 'http://localhost:3000'
-/* eslint-disable no-new */
+// Vue.prototype.$preImg = ''
+
 new Vue({
   el: '#app',
   store,

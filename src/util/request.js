@@ -1,5 +1,19 @@
 import axios from 'axios'
 import qs from 'qs'
+import store from '../store'
+// 请求拦截
+/* axios.interceptors.request.use(config => {
+  if (config.url != baseUrl + '/api/userlogin') {
+      config.headers.authorization = store.state.user.token;
+  }
+  return config
+}) */
+axios.interceptors.request.use(config => {
+  if (config.url != baseUrl + '/api/userlogin') {
+      config.headers.authorization = store.state.user.token;
+  }
+  return config
+})
 
 // 响应拦截
 axios.interceptors.response.use(res => {
@@ -11,6 +25,7 @@ axios.interceptors.response.use(res => {
 
 //开发模式
 const baseUrl = '/api'
+// const baseUrl = ''
 // =========================登录=====================================
 export const requestLogin = (params) => axios({
   url: baseUrl + '/api/userlogin',
