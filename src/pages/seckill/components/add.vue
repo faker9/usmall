@@ -223,24 +223,31 @@ export default {
     getDetail(id) {
       requestSeckillDetail({ id: id }).then((res) => {
         this.form = res.data.list;
+        this.form.id = id
         this.date = [
           JSON.parse(this.form.begintime),
           JSON.parse(this.form.endtime),
         ];
+        this.changeFirst(true)
+        this.changeSecond(true)
       });
     },
 
     //会员修改
-    update() {
-      // this.getDate(this.date)
+    update(formName) {
+      this.getDate(this.date)
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          requestMemberUpdate(this.form).then((res) => {
+          requestSeckillUpdate(this.form).then((res) => {
         if (res.data.code == 200) {
           successAlert(res.data.msg);
-          this.cancel(), this.empty();
+          this.cancel(),
+           this.empty();
           //重新请求数据
           this.requestList();
+          this.requesSeckillList()
+        }else{
+          warningAlert(res.data.msg)
         }
       });
           } else {

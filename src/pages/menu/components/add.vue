@@ -49,7 +49,7 @@
       <div slot="footer" class="dialog-footer">
         <el-button @click="cancel">取 消</el-button>
         <el-button type="primary" @click="confirm('form')" v-if="info.isAdd">添加</el-button>
-        <el-button type="primary" @click="update" v-else>修改</el-button>
+        <el-button type="primary" @click="update('form')" v-else>修改</el-button>
       </div>
     </el-dialog>
   </div>
@@ -161,7 +161,7 @@ export default {
     },
 
     //更新
-    update() {
+    update(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           if (this.form.icon == "" && this.form.url == "") {
